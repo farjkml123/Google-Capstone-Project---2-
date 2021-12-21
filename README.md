@@ -6,11 +6,11 @@ How Can a Wellness Technology Company Play It Smart?
 	
   ### Key tasks:
 1.  Identify the business task: 
-       To analyse smart device usage data in order to gain insight into how consumers use non-Bellabeat smart devices.
+       **To analyse smart device usage data in order to gain insight into how consumers use non-Bellabeat smart devices.**
 
 2.  Consider key stakeholders 
-       Urška Sršen: Bellabeat’s cofounder and Chief Creative Officer.
-       Bellabeat marketing analytics team
+       **Urška Sršen**: Bellabeat’s cofounder and Chief Creative Officer.
+       **Bellabeat marketing analytics team**
 
 ### Deliverable:
    ### Business task:
@@ -22,17 +22,17 @@ Bellabeat executive team believes that analysing smart device fitness data could
   
   1.   Download data and store it appropriately. 
   
-       Data stored on local computer
+       - Data stored on local computer
        
   2.   Identify how it’s organized.
   
-       Organized in CSV format
+       - Organized in CSV format
       
   3.   Sort and filter the data.
  
   5.   Determine the credibility of the data.
   
-       Data is from a credible source, ‘Amazon Mechanical Turk’, under the license of   CC0: Public Domain and can be downloaded from, FitBit Fitness Tracker Data | Kaggle
+       - Data is from a credible source, ‘Amazon Mechanical Turk’, under the license of   CC0: Public Domain and can be downloaded from, FitBit Fitness Tracker Data | Kaggle
 
 ### Deliverable:
  A description of all data sources used
@@ -47,7 +47,7 @@ Data source for this project: Kaggle datasets repository. This Kaggle data set c
    
    3.	Choose your tools
    
-        Tools used:  R, Spreadsheet & SQL
+        - Tools used:  R, Spreadsheet & SQL
    
    3.	Transform the data so you can work with it effectively.
    
