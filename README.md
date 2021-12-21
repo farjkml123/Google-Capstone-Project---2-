@@ -21,12 +21,12 @@ Bellabeat executive team believes that analysing smart device fitness data could
  ### Key tasks:
   
   1.   Download data and store it appropriately. 
-  Data stored on local computer
-  2.	Identify how it’s organized.
-  Organized in CSV format
-  3.	Sort and filter the data.
-  4.	Determine the credibility of the data.
-  Data is from a credible source, ‘Amazon Mechanical Turk’, under the license of   CC0: Public Domain and can be downloaded from, FitBit Fitness Tracker Data | Kaggle
+       Data stored on local computer
+  2.   Identify how it’s organized.
+       Organized in CSV format
+  3.   Sort and filter the data.
+  4.   Determine the credibility of the data.
+       Data is from a credible source, ‘Amazon Mechanical Turk’, under the license of   CC0: Public Domain and can be downloaded from, FitBit Fitness Tracker Data | Kaggle
 
 ### Deliverable:
  A description of all data sources used
