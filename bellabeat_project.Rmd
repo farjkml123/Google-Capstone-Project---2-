@@ -1,0 +1,206 @@
+---
+title: "Bellabeat - Case Study 2"
+author: "Muhammad Farjad Akmal"
+date: "December 19, 2021"
+output: 
+  html_document:
+    toc: True
+    number_sections: True
+    theme: "journal"
+---
+## Credits
+A very special thanks to Julen Aranguren, a Kaggler, whose work was adopted in the creation of this notebook. Kindly check his profile and his notebook at: https://www.kaggle.com/julenaranguren/bellabeat-case-study/notebook
+
+## Business Task
+Analysing device fitness data to unlock new growth opportunities for the company. 
+
+## Objective
+To analyse smart device usage data in order to gain insight into how consumers use non-Bellabeat smart devices.
+
+## Loading Libraries - required for the data visualization, data wrangling and data formmatting.
+```{r}
+library(tidyverse)
+library(reshape2)
+library(scales)
+```
+## Phase 2 : Data Preparation 
+
+
+### Loading CSV files
+```{r}
+daily_Activity <- read.csv("../Fitabase_Data/dailyActivity_merged.csv")
+sleep_day <- read.csv("../Fitabase_Data/sleepDay_merged.csv")
+dailyCalories <- read.csv("../Fitabase_Data/dailyCalories_merged.csv")
+dailyIntensity <- read.csv("../Fitabase_Data/dailyIntensities_merged.csv")
+dailySteps <- read.csv("../Fitabase_Data/dailySteps_merged.csv")
+weightLogInfo <- read_csv("../Fitabase_Data/weightLogInfo_merged.csv")
+```
+
+### Exploring a few key tables
+
+Take a look at the daily_activity data.
+```{r}
+head(daily_Activity)
+```
+Take a look at the sleep_Day data.
+```{r}
+head(sleep_day)
+```
+
+Take a look at the dailyCalories data.
+```{r}
+head(dailyCalories)
+```
+
+Take a look at the dailyIntensity data.
+```{r}
+head(dailyIntensity)
+```
+
+Take a look at the dailySteps data.
+```{r}
+head(dailySteps)
+```
+
+Take a look at the weightLogInfo data.
+```{r}
+head(weightLogInfo)
+```
+
+
+## Data Merging
+Merge all the daily tables data and the sleep data. Join with ID and date columns.
+
+```{r}
+merge_daily_1 <- merge(dailyCalories, daily_Activity, by = c("Id", "Calories"))
+merge_daily_2 <- merge(dailyIntensity, dailyIntensity, by = c("Id", "ActivityDay", "SedentaryMinutes", "LightlyActiveMinutes", "FairlyActiveMinutes", "VeryActiveMinutes", "SedentaryActiveDistance", "LightActiveDistance","ModeratelyActiveDistance","VeryActiveDistance"))
+                       
+merge_daily <- merge(merge_daily_1, merge_daily_2, by = c("Id", "ActivityDay", "SedentaryMinutes", "LightlyActiveMinutes", "FairlyActiveMinutes", "VeryActiveMinutes", "SedentaryActiveDistance", "LightActiveDistance","ModeratelyActiveDistance","VeryActiveDistance")) %>% 
+  select (-ActivityDay) %>% 
+  rename(Date = ActivityDate)
+
+daily_data <- merge(merge_daily, sleep_day, by = "Id", all = TRUE) %>% 
+  drop_na() %>% 
+  select(-SleepDay, -TrackerDistance)
+
+options(repr.plot.width=15, repr.plot.height=8)
+```
+
+The first few rows of daily_data.
+```{r}
+head(daily_data)
+```
+
+Identify all the columns in the daily_data.
+```{r}
+colnames(daily_data)
+```
+
+Summary statistics of daily_data 
+```{r}
+summary(daily_data)
+```
+
+## Phase 3 & 4: Process and Analyse 
+### Data cleaning and preparation for analysis
+```{r}
+data_by_usertype <- daily_data %>% 
+  summarise(
+    user_type = factor(case_when(
+      SedentaryMinutes > mean(SedentaryMinutes) & LightlyActiveMinutes < mean(LightlyActiveMinutes) & FairlyActiveMinutes < mean(FairlyActiveMinutes) & VeryActiveMinutes < mean(VeryActiveMinutes) ~ "Sedentary", 
+      SedentaryMinutes < mean(SedentaryMinutes) & LightlyActiveMinutes > mean(LightlyActiveMinutes) & FairlyActiveMinutes < mean(FairlyActiveMinutes) & VeryActiveMinutes < mean(VeryActiveMinutes) ~ "Lightly Active",
+      SedentaryMinutes < mean(SedentaryMinutes) & LightlyActiveMinutes < mean(LightlyActiveMinutes) & FairlyActiveMinutes > mean(FairlyActiveMinutes) & VeryActiveMinutes < mean(VeryActiveMinutes) ~ "Fairly Active",
+      SedentaryMinutes < mean(SedentaryMinutes) & LightlyActiveMinutes < mean(LightlyActiveMinutes) & FairlyActiveMinutes < mean(FairlyActiveMinutes) & VeryActiveMinutes > mean(VeryActiveMinutes) ~ "Very Active",
+), levels = c("Sedentary", "Lightly Active", "Fairly Active", "Very Active")), Calories,  .group = Id) %>% 
+  drop_na()
+```
+
+
+### Data Visualization and Analysis
+#### Calories Burned w.r.t., User Type  
+```{r}
+data_by_usertype %>% 
+  group_by(user_type) %>% 
+  summarise(total = n()) %>% 
+  mutate(totals = sum(total)) %>% 
+  group_by(user_type) %>% 
+  summarise(total_percent = total / totals) %>% 
+  ggplot(aes(user_type, y = total_percent, fill = user_type)) + 
+  geom_col()+
+  scale_y_continuous(labels = scales::percent) + 
+  theme(legend.position = "none") + 
+  labs(title = "User type distribution", x =NULL) +
+  theme(legend.position = "none", text = element_text(size = 15), plot.title = element_text(hjust = 0.5))
+
+ggplot(data_by_usertype, aes(user_type, Calories, fill = user_type)) + 
+  geom_boxplot() + 
+  theme(legend.position = "none") +
+  labs(title = "Calories burned by User type", x = NULL) + 
+  theme(legend.position = "none", text = element_text(size = 15), plot.title = element_text(hjust = 0.5))
+  
+```
+
+
+### Check how is TotalDistance/TotalSteps is related to Calories Burned
+```{r}
+daily_data %>%
+summarise(
+distance = factor(case_when(
+    TotalDistance < 4.5 ~ "< 4.5 mi",
+    TotalDistance >= 4.5 & TotalDistance <= 7 ~ "4.5 > & < 7 mi",
+    TotalDistance > 7 ~ "> 7 mi",
+),levels = c("> 7 mi","4.5 > & < 7 mi","< 4.5 mi")),
+steps = factor(case_when(
+    TotalSteps < 6000 ~ "< 6k steps",
+    TotalSteps >= 6000 & TotalSteps <= 10000 ~ "6k > & < 10k Steps",
+    TotalSteps > 10000 ~ "> 10k Steps",
+),levels = c("> 10k Steps", "6k > & < 10k Steps", "< 6k steps")),
+Calories) %>%
+ggplot(aes(steps,Calories,fill=steps)) +
+    geom_boxplot() +
+    facet_wrap(~distance)+
+    labs(title="Calories burned by Steps and Distance",x=NULL) +
+    theme(legend.position = "none", axis.text.x = element_text(size = 10, angle = 45, hjust =1), plot.title = element_text(hjust = 0.5))
+    
+```
+
+### Sleeping patterns and quality of sleep
+```{r}
+sleepType_by_userType <- daily_data %>%
+group_by(Id) %>%
+summarise(
+user_type = factor(case_when(
+    SedentaryMinutes > mean(SedentaryMinutes) & LightlyActiveMinutes < mean(LightlyActiveMinutes) & FairlyActiveMinutes < mean(FairlyActiveMinutes) & VeryActiveMinutes < mean(VeryActiveMinutes) ~ "Sedentary",
+    SedentaryMinutes < mean(SedentaryMinutes) & LightlyActiveMinutes > mean(LightlyActiveMinutes) & FairlyActiveMinutes < mean(FairlyActiveMinutes) & VeryActiveMinutes < mean(VeryActiveMinutes) ~ "Lightly Active",
+    SedentaryMinutes < mean(SedentaryMinutes) & LightlyActiveMinutes < mean(LightlyActiveMinutes) & FairlyActiveMinutes > mean(FairlyActiveMinutes) & VeryActiveMinutes < mean(VeryActiveMinutes) ~ "Fairly Active",
+    SedentaryMinutes < mean(SedentaryMinutes) & LightlyActiveMinutes < mean(LightlyActiveMinutes) & FairlyActiveMinutes < mean(FairlyActiveMinutes) & VeryActiveMinutes > mean(VeryActiveMinutes) ~ "Very Active",
+),levels=c("Sedentary", "Lightly Active", "Fairly Active", "Very Active")),
+sleep_type = factor(case_when(
+    mean(TotalMinutesAsleep) < 360 ~ "Bad Sleep",
+    mean(TotalMinutesAsleep) > 360 & mean(TotalMinutesAsleep) <= 480 ~ "Normal Sleep",
+    mean(TotalMinutesAsleep) > 480 ~ "Over Sleep",
+),levels=c("Bad Sleep", "Normal Sleep", "Over Sleep")), total_sleep = sum(TotalMinutesAsleep) ,.groups="drop"
+) %>%
+drop_na() %>%
+group_by(user_type) %>%
+summarise(bad_sleepers = sum(sleep_type == "Bad Sleep"), normal_sleepers = sum(sleep_type == "Normal Sleep"),over_sleepers = sum(sleep_type == "Over Sleep"),total=n(),.groups="drop") %>%
+group_by(user_type) %>%
+summarise(
+    bad_sleepers = bad_sleepers / total, 
+    normal_sleepers = normal_sleepers / total, 
+    over_sleepers = over_sleepers / total,
+    .groups="drop"
+)
+```
+
+### Plotting the above findings
+```{r}
+sleepType_by_userType_melted<- melt(sleepType_by_userType, id.vars = "user_type")
+
+ggplot(sleepType_by_userType_melted, aes(user_type, value, fill = variable)) +
+geom_bar(position = "dodge", stat = "identity") +
+scale_y_continuous(labels = scales::percent) +
+labs(x=NULL, fill="Sleep type") + 
+theme(legend.position="bottom",text = element_text(size = 15),plot.title = element_text(hjust = 0.5))
+```
+
