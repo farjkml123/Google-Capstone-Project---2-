@@ -11,6 +11,7 @@ How Can a Wellness Technology Company Play It Smart?
 2.  Consider key stakeholders 
 
        **Urška Sršen**: Bellabeat’s cofounder and Chief Creative Officer.
+       
        **Bellabeat marketing analytics team**
 
 ### Deliverable:
