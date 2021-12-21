@@ -9,6 +9,7 @@ How Can a Wellness Technology Company Play It Smart?
        **To analyse smart device usage data in order to gain insight into how consumers use non-Bellabeat smart devices.**
 
 2.  Consider key stakeholders 
+
        **Urška Sršen**: Bellabeat’s cofounder and Chief Creative Officer.
        **Bellabeat marketing analytics team**
 
