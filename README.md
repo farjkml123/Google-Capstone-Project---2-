@@ -19,7 +19,7 @@ Bellabeat executive team believes that analysing smart device fitness data could
 	
   ### Key Tasks:
 1.   	Download data and store it appropriately. 
-        Data stored on local computer
+         Data stored on local computer
 2.	Identify how it’s organized.
         Organized in CSV format
 3.	Sort and filter the data.
