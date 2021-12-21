@@ -47,7 +47,7 @@ Data source for this project: Kaggle datasets repository. This Kaggle data set c
    
    3.	Choose your tools
    
-   Tools used:  R, Spreadsheet & SQL
+        Tools used:  R, Spreadsheet & SQL
    
    3.	Transform the data so you can work with it effectively.
    
